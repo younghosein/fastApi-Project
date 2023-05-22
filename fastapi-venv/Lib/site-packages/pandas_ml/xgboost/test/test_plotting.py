@@ -1,0 +1,59 @@
+#!/usr/bin/env python
+import pytest
+
+import matplotlib
+matplotlib.use('Agg')
+
+import numpy as np                            # noqa
+import pandas as pd                           # noqa
+
+import pandas_ml as pdml                      # noqa
+import pandas_ml.util.testing as tm           # noqa
+
+import sklearn.datasets as datasets           # noqa
+import xgboost as xgb                         # noqa
+
+
+class TestXGBoostPlotting(tm.TestCase):
+
+    def test_plotting(self):
+
+        iris = datasets.load_iris()
+        df = pdml.ModelFrame(iris)
+
+        df.fit(df.svm.SVC())
+
+        # raises if df.estimator is not XGBModel
+        with pytest.raises(ValueError):
+            df.xgb.plot_importance()
+
+        with pytest.raises(ValueError):
+            df.xgb.to_graphviz()
+
+        with pytest.raises(ValueError):
+            df.xgb.plot_tree()
+
+        df.fit(df.xgb.XGBClassifier())
+
+        from matplotlib.axes import Axes
+        from graphviz import Digraph
+
+        try:
+            ax = df.xgb.plot_importance()
+        except ImportError:
+            import nose
+            # matplotlib.use doesn't work on Travis
+            # PYTHON=3.4 PANDAS=0.17.1 SKLEARN=0.16.1
+            raise nose.SkipTest()
+
+        self.assertIsInstance(ax, Axes)
+        assert ax.get_title() == 'Feature importance'
+        assert ax.get_xlabel() == 'F score'
+        assert ax.get_ylabel() == 'Features'
+        assert len(ax.patches) == 4
+
+        g = df.xgb.to_graphviz(num_trees=0)
+        self.assertIsInstance(g, Digraph)
+
+        ax = df.xgb.plot_tree(num_trees=0)
+        self.assertIsInstance(ax, Axes)

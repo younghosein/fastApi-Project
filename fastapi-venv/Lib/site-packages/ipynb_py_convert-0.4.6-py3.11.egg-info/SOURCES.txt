@@ -1,0 +1,12 @@
+LICENSE
+MANIFEST.in
+README.md
+setup.cfg
+setup.py
+ipynb_py_convert/__init__.py
+ipynb_py_convert/__main__.py
+ipynb_py_convert.egg-info/PKG-INFO
+ipynb_py_convert.egg-info/SOURCES.txt
+ipynb_py_convert.egg-info/dependency_links.txt
+ipynb_py_convert.egg-info/entry_points.txt
+ipynb_py_convert.egg-info/top_level.txt
